@@ -11,7 +11,7 @@ package main
 import (
 	"log"
 
-	apiserver "../../internal/holostorageaccessor"
+	apiserver "holo-storage-accessor/internal/holostorageaccessor"
 )
 
 func main() {
