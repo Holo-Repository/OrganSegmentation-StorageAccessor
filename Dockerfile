@@ -1,4 +1,4 @@
-FROM golang:1.12.7 AS build
+FROM golang:1.17 AS build
 RUN mkdir /workspace
 WORKDIR /workspace
 COPY api ./api
