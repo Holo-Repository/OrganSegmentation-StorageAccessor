@@ -1,220 +1,94 @@
-<p align="center">
-  <img width="300" alt="HoloRepository logo" src="https://user-images.githubusercontent.com/11090412/62009421-f491a400-b156-11e9-98ca-408dc2fab7e8.png">
-  <p align="center">
-    A system for transforming medical imaging studies such as CT or MRI scans into 3-dimensional holograms, storing data on a cloud-based platform and making it available for other systems.
-  </p>
-  
-  <p align="center">
-    Find out more on the <a href="https://fanbomeng97.github.io/HoloRepository-Website/#/">project website</a>.
-  </p>
+# HoloStorageAccessor <a href="https://dev.azure.com/MSGOSHHOLO/HoloRepository/_build/latest?definitionId=1&branchName=dev"><img src="https://dev.azure.com/MSGOSHHOLO/HoloRepository/_apis/build/status/HoloRepository-Core?branchName=dev&jobName=HoloStorageAccessor" alt="HoloStorageAccessor build status" align="right" /></a>
 
-  <p align="center">
-    <a href="https://dev.azure.com/MSGOSHHOLO/HoloRepository/_build/latest?definitionId=1&branchName=dev">
-      <img src="https://img.shields.io/azure-devops/build/MSGOSHHOLO/84bcb432-f279-452c-a53c-37df0f28baf0/1" alt="Build status"/>
-    </a>
-    <a href="https://www.codefactor.io/repository/github/nbckr/holorepository-core">
-      <img alt="CodeFactor Grade" src="https://img.shields.io/codefactor/grade/github/nbckr/HoloRepository-Core" />
-    </a>
-    <a href="https://github.com/nbckr/HoloRepository-Core/issues">
-      <img alt="GitHub issues" src="https://img.shields.io/github/issues/nbckr/HoloRepository-Core" />
-    </a>
-    <a href="https://github.com/nbckr/HoloRepository-Core/pulls">
-      <img alt="GitHub pull requests" src="https://img.shields.io/github/issues-pr/nbckr/HoloRepository-Core" />
-    </a>
-    <a href="https://github.com/nbckr/HoloRepository-Core/blob/master/LICENSE">
-      <img alt="GitHub" src="https://img.shields.io/github/license/nbckr/HoloRepository-Core" />
-    </a>
-  </p>
-</p>
+The HoloStorage is a cloud-based storage for medical 3D models and associated metadata. Entirely hosted on Microsoft Azure, a FHIR server stores the structured medical data and a Blob Storage server provides for the binary holographic data. With the HoloStorageAccessor, we provide an enhanced facade, offering a consistent interface to the HoloStorage and translating the public REST API to internal FHIR queries. To facilitate development of 3rd party components, the interface comes with an interactive OpenAPI documentation.
 
-## Table of contents
+## Description
 
-- [Background](#background)
-- [System overview](#system-overview)
-  - [HoloRepositoryUI](#holorepositoryui)
-  - [HoloPipelines](#holopipelines)
-  - [HoloStorage](#holostorage)
-  - [HoloStorageAccessor](#holostorageaccessor)
-  - [HoloStorageConnector](#holostorageconnector)
-  - [HoloRepository Demo application](#holorepository-demo-application)
-  - [Other tools](#other-tools)
-  - [Integration with other projects](#integration-with-other-projects)
-- [A word of warning](#a-word-of-warning)
-- [Code organisation](#code-organisation)
-- [Development](#development)
-  - [Get started](#get-started)
-  - [Set up the environment](#set-up-the-environment)
-  - [System integration](#system-integration)
-- [Contributing](#contributing)
-- [Acknowledgements](#acknowledgements)
-- [License](#license)
+<img src="https://user-images.githubusercontent.com/11090412/62010808-49d5b180-b167-11e9-9ce7-7335aa616926.png" alt="screenshot" height="350" align="left" />
+To protect the HoloStorage and hide concrete implementation details, such as which FHIR resources are used to store data internally, the HoloStorage-Accessor provides a consistent and unified interface to the data, and the single entry-point for 3rd party systems. As such, it acts as a façade. However, it also performs some more complex business logic, like translating calls to a minimalistic interface to FHIR queries and building complex queries, potentially filtering and aggregating results.
 
-## Background
+The REST API is being carefully designed, so that it not only satisfies the requirements of the HoloPipelines’ artefacts, but also supports adjacent projects (DepthVisor, Annotator) and any future projects in this context. We strive to find a balance between an open, generic interface and enforcing enough relevant data to effectively query and utilise the data.
 
-Recent technical advancements in the realm of augmented reality (AR) and the availability of consumer head-mounted display (HMD) devices such as the Microsoft HoloLens have opened a wealth of opportunities for healthcare applications, particularly in medical imaging. Several approaches have been proposed to transform imaging studies, such as CT or MRI scans, into three-dimensional models which can be inspected and manipulated in an AR experience [1–4]. Generally, all studies agree that the technology is very promising and may even revolutionise the practice of medicine [5]. However, virtually every existing workflow relies on significant manual guidance to conduct steps like segmentation or conversion to polygonal models.
+## Technologies
 
-Neural networks can help automate many tedious tasks and are increasingly used in medical imaging. Architectures such as the 3D U-Net [6] generate models which autonomously create segmentation maps, even with relatively little training data. However, translating these advancements from theory to clinical practice has unique challenges: The source code may not be available, documentation may be missing or require too much technical knowledge. Furthermore, different operating systems, software packages and dependencies obstruct successful usage [7].
+The following technologies are used in this component:
 
-With the HoloRepository project, we intend to build the technical base for a seamless workflow that allows practitioners to generate 3D models from imaging studies and access them in an AR setting with as little manual involvement as possible. Pre-trained neural networks can be packaged into shareable Docker containers and accessed with a unified interface. Additionally, the Fast Healthcare Interoperability Resources (FHIR) standard, which is rapidly being adapted and also has a significant impact on the field of radiology [8], will connect the 3D models with existing patient health records.
+- Go 1.12.7
+- API specification using [OpenAPI v3.0.2](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md)
+- Backend implementation using [Go Gin framework](https://github.com/gin-gonic/gin)
+- Server stub generated from OpenAPI specifications using [OpenAPI Generator](https://openapi-generator.tech/)
 
-<details>
-  <summary><b>Show references</b></summary>
+## API specification
 
->  * [1]	Smith CM. Medical Imaging in Mixed Reality: A holographics software pipeline. University College London, 2018.
->  * [2]	Pratt P, Ives M, Lawton G, Simmons J, Radev N, Spyropoulou L, et al. Through the HoloLensTM looking glass: augmented reality for extremity reconstruction surgery using 3D vascular models with perforating vessels. Eur Radiol Exp 2018;2:2. doi:10.1186/s41747-017-0033-2.
->  * [3]	Affolter R, Eggert S, Sieberth T, Thali M, Ebert LC. Applying augmented reality during a forensic autopsy—Microsoft HoloLens as a DICOM viewer. Journal of Forensic Radiology and Imaging 2019;16:5–8. doi:10.1016/j.jofri.2018.11.003.
->  * [4]	Page M. Visualization of Complex Medical Data Using Next-Generation Holographic Techniques 2017.
->  * [5]	Beydoun A, Gupta V, Siegel E. DICOM to 3D Holograms: Use Case for Augmented Reality in Diagnostic and Interventional Radiology. SIIM Scientific Session Posters and Demonstrations 2017:4.
->  * [6]	Çiçek Ö, Abdulkadir A, Lienkamp SS, Brox T, Ronneberger O. 3D U-Net: Learning Dense Volumetric Segmentation from Sparse Annotation. ArXiv:160606650 [Cs] 2016.
->  * [7]	Beers A, Brown J, Chang K, Hoebel K, Gerstner E, Rosen B, et al. DeepNeuro: an open-source deep learning toolbox for neuroimaging. ArXiv:180804589 [Cs] 2018.
->  * [8]	Kamel PI, Nagy PG. Patient-Centered Radiology with FHIR: an Introduction to the Use of FHIR to Offer Radiology a Clinically Integrated Platform. J Digit Imaging 2018;31:327–33. doi:10.1007/s10278-018-0087-6.
-</details>
+The API specification can be found in the `api/` directory. A deployed version of the interactive documentation is available [here](https://app.swaggerhub.com/apis/boonwj/HoloRepository/).
 
-## System overview
+When the application is deployed, the documentation can also be viewed at the `/api/v1/ui` endpoint.
 
-![HoloRepository system overview](https://user-images.githubusercontent.com/11090412/63985867-7748ae80-cac9-11e9-82e1-74de31f486d7.png)
-
-The HoloRepository ecosystem consists of multiple sub-systems and remains open to future extensions. Currently, core components are:
-
-### [HoloRepositoryUI](https://github.com/nbckr/HoloRepository-Core/tree/master/HoloRepositoryUI)<a href="https://dev.azure.com/MSGOSHHOLO/HoloRepository/_build/latest?definitionId=1&branchName=dev"><img src="https://dev.azure.com/MSGOSHHOLO/HoloRepository/_apis/build/status/HoloRepository-Core?branchName=dev&jobName=HoloRepositoryUI%20-%20Client" alt="Client build status" align="right" /></a><a href="https://dev.azure.com/MSGOSHHOLO/HoloRepository/_build/latest?definitionId=1&branchName=dev"><img src="https://dev.azure.com/MSGOSHHOLO/HoloRepository/_apis/build/status/HoloRepository-Core?branchName=dev&jobName=HoloRepositoryUI%20-%20Server" alt="Server build status" align="right" /></a>
-
-A web-based application that allows practitioners to browse their patients and manage the generation of 3D models sourced from imaging studies like CT or MRI scans. The client-side application is accompanied by an API server that is responsible for communicating with the other components.
-
-### [HoloPipelines](https://github.com/nbckr/HoloRepository-Core/tree/master/HoloPipelines)<a href="https://dev.azure.com/MSGOSHHOLO/HoloRepository/_build/latest?definitionId=1&branchName=dev"><img src="https://dev.azure.com/MSGOSHHOLO/HoloRepository/_apis/build/status/HoloRepository-Core?branchName=dev&jobName=HoloPipelines%20-%20Core" alt="HoloPipelines core build status" align="right" /></a><a href="https://dev.azure.com/MSGOSHHOLO/HoloRepository/_build/latest?definitionId=1&branchName=dev"><img src="https://dev.azure.com/MSGOSHHOLO/HoloRepository/_apis/build/status/HoloRepository-Core?branchName=dev&jobName=HoloPipelines%20-%20Models" alt="HoloPipelines models build status" align="right" /></a>
-
-A cloud-based service that performs the automatic generation of 3D models from 2D image stacks. Pre-trained neural network models are deployed and accessed with this component alongside traditional techniques like Hounsfield value thresholding.
-
-### HoloStorage
-
-A cloud-based storage for medical 3D models and associated metadata. Entirely hosted on Microsoft Azure, a FHIR server stores the structured medical data and a Blob Storage server provides for the binary holographic data.
-
-### [HoloStorageAccessor](https://github.com/nbckr/HoloRepository-Core/tree/master/HoloStorageAccessor)<a href="https://dev.azure.com/MSGOSHHOLO/HoloRepository/_build/latest?definitionId=1&branchName=dev"><img src="https://dev.azure.com/MSGOSHHOLO/HoloRepository/_apis/build/status/HoloRepository-Core?branchName=dev&jobName=HoloStorageAccessor" alt="HoloStorageAccessor build status" align="right" /></a>
-
-An enhanced facade, offering a consistent interface to the HoloStorage and translating the public REST API to internal FHIR queries. To facilitate development of 3rd party components, the interface comes with an interactive OpenAPI documentation.
-
-### [HoloStorageConnector](https://github.com/nbckr/HoloRepository-HoloLens/tree/master/HoloStorageConnector)
-
-A Unity library handling the runtime network connections from HoloLens applications to the HoloStorage. Distributed as a separate UnityPackage, this is meant to facilitate development of 3rd party applications that plug into the HoloRepository ecosystem.
-
-### [HoloRepository demo application](https://github.com/nbckr/HoloRepository-HoloLens/tree/master/HoloRepositoryDemoApplication)
-
-A simple application that demonstrates how to dynamically access 3D models stored in the HoloStorage. The scenes can be distributed alongside the Connector library and serve as examples and interactive documentation.
-
-### [Other tools](https://github.com/nbckr/HoloRepository-Core/tree/master/Misc)
-
-Several scripts and tools were developed to help perform tasks, for instance test data generation or deployment automation.
-
-### Integration with other projects
-
-The system is designed to enable other systems to integrate. Some current projects plugging into the system are DepthVisor, Annotator and SyntheticDataGenerator.
-
-## A word of warning
-
-> The system is currently not performing any input validation on the selected imaging
-> studies. There are some known issues that occur when the input images are not fit for
-> the selected pipelines. For instance, when a pelvis DICOM input is selected with the
-> `lung_segmentation` pipeline, it will fail. When this is invoked from the UI, the
-> error handling and messages may not be conclusive.
-
-To ensure good results and avoid unexpected system behaviour, you have to manually make
-sure that the image study you select depicts the correct body site for the selected
-pipeline. With the current set of pipelines and sample data, the appropriate inputs
-which are guaranteed to succeed are:
-
-* `bone_segmentation`
-  * all inputs (chest, abdomen, pelvis)
-* `lung_segmentation`
-  * chest
-* `abdominal_organs_segmentation`
-  * abdomen
-
-## Code organisation
-
-Most of the components are kept here in the [HoloRepository-Core](https://github.com/nbckr/HoloRepository-Core) mono-repository. The sub-directories correspond to sub-components as described above. The only exception are the components that are developed in Unity/C#, they are separately kept in the [HoloRepository-HoloLens](https://github.com/nbckr/HoloRepository-HoloLens) repository.
+## Requirements
+- Go 1.12.7
+- FHIR server
+- Azure blob storage service
 
 ## Development
+### Installation
+To install program dependencies
 
-### Get started
-
-To get started, you should clone both relevant git repositories:
-```shell
-$ git clone git@github.com:nbckr/HoloRepository-Core.git
-$ git clone git@github.com:nbckr/HoloRepository-HoloLens.git
+```
+go get -d -v ./...
 ```
 
-Next, it is highly recommended to expolore the `README`s that are provided for each component.
+### Run
 
-### Set up the environment
+To run the server, first configure the necessary [configurations](#configuration) then run the following
 
-The different components are developed in different languages and making use of different tools, so your next step should be inspecting the `README` in the respective directory.
-
-#### Pre-commit hooks
-
-As some languages, like Python, are used for multiple components, we use a common tool to enforce coherent coding style. The code formatter [black](https://github.com/psf/black) is checking new commits via a pre-commit hook. Steps to set it up:
-
-1. Install developer dependencies with `pipenv install --dev` or `pip install -r requirements-dev.txt` in the project root directory
-2. Setup pre-commit hooks with `pre-commit install`
-
-For the TypeScript portions, similar tooling is used. To set it up, follow the instructions in the respective sub-directories.
-
-#### CodeFactor
-
-CodeFactor is another tool we use to ensure high code quality. It will run automatically on GitHub for any activated branches, as well as for all pull requests. If the service finds any issues, please fix them before we will continue to consider the pull request.
-
-_Note: The `tslint.json` config is solely for this purpose. The actual JavaScript / TypeScript code is linted with ESLint, given that TSLint will be deprecated. Use the TSLint config only when CodeFactor's default rules are unreasonable._
-
-### System integration
-
-#### Ports and interfaces
-
-The different components are meant to be deployed independently. They communicate via REST APIs, which are documented in the sub-directories' `README`s. For development, the system can be run on the same host, using these default ports:
-```c
-HoloRepositoryUI/client:  3000
-HoloRepositoryUI/server:  3001
-HoloPipelines/core:       3100
-HoloStorageAccessor:      3200
-HoloPipelines/models:     5000, 5001, 5002, ...
+```
+go run cmd/holo-storage-accessor/main.go
 ```
 
-#### Run system in docker-compose
+Verify the accessor by visiting `localhost:3200/api/v1` or `localhost:3200/api/v1/ui`
 
-As the system comprises multiple separate components, it can be helpful to use docker-compose to locally start all of them at once, for instance to perform integration tests or develop a new component.
+### Testing
 
-Note: To successfully start the Accessor, you need to provide the relevant configuration in `./HoloStorageAccessor/config.env` (see the sub-component's `README` for more information).
+To run the tests
 
-This will also reflect the current state of the sub-components' `Dockerfile`s. To build and start all images (if they haven't been build already), run:
-```shell
-$ docker-compose --file docker-compose.dev.yml up
-Starting holorepository-core_holorepository-ui-client_1                      ... done
-Starting holorepository-core_holopipelines-models__dense_vnet_abdominal_ct_1 ... done
-Starting holorepository-core_holorepository-ui-server_1                      ... done
-Creating holorepository-core_holostorage-accessor_1                          ... done
+```
+go test ./...
 ```
 
-Force a rebuild by replacing `docker-compose up` with `docker-compose build`.
+To test the different API endpoints, there is a postman collection in the test folder.
 
-You can also just run a single component or a selection of components, but still use the provided configurations, port mappings etc. from the `docker-compose` file for convenience:
-```shell
-$ docker-compose --file docker-compose.dev.yml up holostorage-accessor holorepository-ui-server
+Import them into [postman](https://www.getpostman.com/) and run through them.
+
+## Build and deployment
+
+To run the server in a docker container
+
+```
+docker build -t holo-storage-accessor .
 ```
 
-Lastly, it is also possible to start the whole system except for one component, which will allow you to develop this component and, for instance, manually run it in dev mode.
-```shell
-$ docker-compose --file docker-compose.dev.yml up --scale holostorage-accessor=0
+Once the image is built load the configuration, just run
+
 ```
+docker run -it --rm --env-file .env -p 3200:3200 holo-storage-accessor
+```
+You can then access the container via localhost:3200
 
-## Contributing
+## Configuration
+Accessor application uses the following environmental variables as configuration.
 
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change. For feature requests, please also open an issue.
+If using docker, the environment configuration fields can be set via `.env`.
 
-## Acknowledgements
+If not, `export` the variables before running the program.
 
-Built at [University College London](https://www.ucl.ac.uk/) in cooperation with [Microsoft](https://www.microsoft.com/en-gb) and [GOSH DRIVE](https://www.goshdrive.com/).
+| Field                    | Description                                      |
+|--------------------------|--------------------------------------------------|
+| ACCESSOR_FHIR_URL        | URL to the FHIR server that accessor connects to |
+| AZURE_STORAGE_ACCOUNT    | Name of blob store for holograms                 |
+| AZURE_STORAGE_ACCESS_KEY | Access key to the blob store                     |
+| ENABLE_CORS              | Enable CORS support for accessor                 |
 
-Academic supervision: Prof. Dean Mohamedally, Prof. Neil Sebire
 
-Product logo is derived from a work by <a href="https://www.freepik.com/">Freepik</a> at <a href="https://www.flaticon.com/">www.flaticon.com</a>.
+## Contact and support
 
-## License
-
-[AGPLv3](https://choosealicense.com/licenses/agpl-3.0/)
+This component is owned by [boonwj](https://github.com/boonwj). Please get in touch if you have any questions. For change requests and bug reports, please open a new issue.
