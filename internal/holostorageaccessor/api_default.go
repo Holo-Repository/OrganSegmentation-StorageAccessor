@@ -221,7 +221,7 @@ func HologramsHidDelete(c *gin.Context) {
 		return
 	}
 
-	hologramFilename := id + ".glb"
+	hologramFilename := id + ".obj"
 	err := DeleteHologramFromBlobStorage(hologramFilename)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, Error{ErrorCode: "500", ErrorMessage: err.Error()})
@@ -249,7 +249,7 @@ func HologramsHidDownloadGet(c *gin.Context) {
 	// Filename of hologram stored on the blob storage
 	var data bytes.Buffer
 	hologramAPISpec := hologramFhir.ToAPISpec()
-	hologramFilename := id + ".glb"
+	hologramFilename := id + ".obj"
 	data, err = DownloadHologramFromBlobStorage(hologramFilename)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, Error{ErrorCode: "500", ErrorMessage: err.Error()})
@@ -258,7 +258,7 @@ func HologramsHidDownloadGet(c *gin.Context) {
 
 	// Set the filename as the hologram's title when a user downloads the hologram
 	extraHeaders := map[string]string{
-		"Content-Disposition": `attachment; filename="` + hologramAPISpec.Title + `.glb"`,
+		"Content-Disposition": `attachment; filename="` + hologramAPISpec.Title + `.obj"`,
 	}
 	c.DataFromReader(http.StatusOK, int64(data.Len()), hologramAPISpec.ContentType, bytes.NewReader(data.Bytes()), extraHeaders)
 }
