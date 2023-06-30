@@ -334,7 +334,7 @@ func HologramsPost(c *gin.Context) {
 		return
 	}
 
-	hologramFilename := newHologramAPISpec.Hid + ".glb"
+	hologramFilename := newHologramAPISpec.Hid + ".obj"
 	err = UploadHologramToBlobStorage(hologramFilename, hologramFileIO)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, Error{ErrorCode: "500", ErrorMessage: err.Error()})
