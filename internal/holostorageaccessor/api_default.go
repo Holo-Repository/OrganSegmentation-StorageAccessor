@@ -235,16 +235,6 @@ func HologramsHidDownloadGet(c *gin.Context) {
 	var id = c.Param("hid")
 	var hologramFhir HologramDocumentReferenceFHIR
 	err := GetSingleFHIRMetadata(accessorConfig.FhirURL, id, &hologramFhir)
-	if err != nil {
-		errArray := strings.SplitN(err.Error(), ":", 2)
-		errCode, errMsg := errArray[0], errArray[1]
-		if errCode == "404" {
-			c.JSON(http.StatusNotFound, Error{ErrorCode: errCode, ErrorMessage: errMsg})
-		} else {
-			c.JSON(http.StatusInternalServerError, Error{ErrorCode: errCode, ErrorMessage: errMsg})
-		}
-		return
-	}
 
 	// Filename of hologram stored on the blob storage
 	var data bytes.Buffer
