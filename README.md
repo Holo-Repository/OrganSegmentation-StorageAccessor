@@ -64,7 +64,7 @@ Import them into [postman](https://www.getpostman.com/) and run through them.
 To run the server in a docker container
 
 ```
-docker build -t holo-storage-accessor .
+docker build . -t holo-storage-accessor 
 ```
 
 Once the image is built load the configuration, just run
