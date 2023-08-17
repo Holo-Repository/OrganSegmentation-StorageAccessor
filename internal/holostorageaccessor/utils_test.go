@@ -248,7 +248,7 @@ func TestLoadConfiguration(t *testing.T) {
 				"ACCESSOR_FHIR_URL":        "bad-url.com",
 				"ENABLE_CORS":              "false",
 			},
-			want_err: "ACCESSOR_FHIR_URL error: parse bad-url.com: invalid URI for request",
+			want_err: "ACCESSOR_FHIR_URL error: parse \"bad-url.com\": invalid URI for request",
 		},
 		"bad_spaces_in_url": test{
 			want: AccessorConfig{},
@@ -258,7 +258,7 @@ func TestLoadConfiguration(t *testing.T) {
 				"ACCESSOR_FHIR_URL":        "http://  bad-url.com",
 				"ENABLE_CORS":              "false",
 			},
-			want_err: `ACCESSOR_FHIR_URL error: parse http://  bad-url.com: invalid character " " in host name`,
+			want_err: `ACCESSOR_FHIR_URL error: parse "http://  bad-url.com": invalid character " " in host name`,
 		},
 		"all_config": test{
 			confFields: map[string]string{
