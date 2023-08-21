@@ -1,4 +1,11 @@
-# HoloStorageAccessor <a href="https://dev.azure.com/MSGOSHHOLO/HoloRepository/_build/latest?definitionId=1&branchName=dev"><img src="https://dev.azure.com/MSGOSHHOLO/HoloRepository/_apis/build/status/HoloRepository-Core?branchName=dev&jobName=HoloStorageAccessor" alt="HoloStorageAccessor build status" align="right" /></a>
+# HoloRepository 2023<a href="https://dev.azure.com/Holo-Repository/OrganSegmentation/_build/results?buildId=73&view=results"><img src="https://dev.azure.com/MSGOSHHOLO/HoloRepository/_apis/build/status/HoloRepository-Core?branchName=dev&jobName=HoloStorageAccessor" alt="HoloStorageAccessor build status" align="right" /></a>
+
+This repository is for the HoloRepository 2023 project, an update from the 2019 version. The majority of repository is the same as the 2019 version, with the exception of a wronging fhir service is removed, this is mainly due to the 2023 version of the project no longer needs fhir service. However, some remnant of fhir serice still remain which should be removed in the future.
+
+Main chganegs from the 2019 version:
+- a wronging fhir service is removed in api_default.go 
+
+# HoloStorageAccessor 
 
 The HoloStorage is a cloud-based storage for medical 3D models and associated metadata. Entirely hosted on Microsoft Azure, a FHIR server stores the structured medical data and a Blob Storage server provides for the binary holographic data. With the HoloStorageAccessor, we provide an enhanced facade, offering a consistent interface to the HoloStorage and translating the public REST API to internal FHIR queries. To facilitate development of 3rd party components, the interface comes with an interactive OpenAPI documentation.
 
