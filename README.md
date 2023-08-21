@@ -4,6 +4,7 @@ This repository is for the HoloRepository 2023 project, an update from the 2019 
 
 Main chganegs from the 2019 version:
 - a wronging fhir service is removed in api_default.go 
+- small bug fix in test file
 
 # HoloStorageAccessor 
 
