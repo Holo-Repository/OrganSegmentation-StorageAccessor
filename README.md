@@ -1,11 +1,12 @@
 # HoloRepository 2023<a href="https://dev.azure.com/Holo-Repository/OrganSegmentation/_build/results?buildId=73&view=results"><img src="https://dev.azure.com/MSGOSHHOLO/HoloRepository/_apis/build/status/HoloRepository-Core?branchName=dev&jobName=HoloStorageAccessor" alt="HoloStorageAccessor build status" align="right" /></a>
 
-This repository is for the HoloRepository 2023 project, an update from the 2019 version. The majority of repository is the same as the 2019 version, with the exception of a wronging fhir service is removed, this is mainly due to the 2023 version of the project no longer needs fhir service. However, some remnant of fhir serice still remain which should be removed in the future.
+This repository is for the HoloRepository 2023 project, an update from the 2019 version. The majority of the repository is the same as the 2019 version, with the exception of the fhir service being removed, this is mainly due to the 2023 version of the project no longer needing fhir service. However, some remnants of fhir serice still remain which should be removed in the future.
 
-Main chganegs from the 2019 version:
-- a wronging fhir service is removed in api_default.go 
-- small bug fix in test file
+Main changes from the 2019 version:
+- fhir service is removed in api_default.go 
+- small bug fix in the test file
 
+Below is readme from the original developers with some updates
 # HoloStorageAccessor 
 
 The HoloStorage is a cloud-based storage for medical 3D models and associated metadata. Entirely hosted on Microsoft Azure, a FHIR server stores the structured medical data and a Blob Storage server provides for the binary holographic data. With the HoloStorageAccessor, we provide an enhanced facade, offering a consistent interface to the HoloStorage and translating the public REST API to internal FHIR queries. To facilitate development of 3rd party components, the interface comes with an interactive OpenAPI documentation.
@@ -21,7 +22,7 @@ The REST API is being carefully designed, so that it not only satisfies the requ
 
 The following technologies are used in this component:
 
-- Go 1.12.7
+- Go 1.17
 - API specification using [OpenAPI v3.0.2](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md)
 - Backend implementation using [Go Gin framework](https://github.com/gin-gonic/gin)
 - Server stub generated from OpenAPI specifications using [OpenAPI Generator](https://openapi-generator.tech/)
@@ -33,8 +34,7 @@ The API specification can be found in the `api/` directory. A deployed version o
 When the application is deployed, the documentation can also be viewed at the `/api/v1/ui` endpoint.
 
 ## Requirements
-- Go 1.12.7
-- FHIR server
+- Go 1.17
 - Azure blob storage service
 
 ## Development
